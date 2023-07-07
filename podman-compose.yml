@@ -1,0 +1,33 @@
+version: 3.7
+
+#name: somdomato
+services:
+  postgres:
+    image: docker.io/library/postgres:14
+    container_name: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: passwd
+      POSTGRES_USER: admin
+      POSTGRES_DB: somdomato
+
+  icecast:
+    image: docker.io/pltnk/icecast2
+    container_name: icecast
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./icecast2.xml:/etc/icecast2/icecast.xml
+    depends_on:
+      - liquidsoap
+
+  liquidsoap:
+    image: docker.io/pltnk/liquidsoap
+    container_name: liquidsoap
+    restart: always
+    volumes:
+      - ./script.liq:/etc/liquidsoap/script.liq
+      - /home/lucas/audio:/media/music

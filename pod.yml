@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: somdomato
+spec:
+  containers:
+    - name: postgres
+      image: docker.io/library/postgres:14
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_PASSWORD
+          value: passwd
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_DB
+          value: somdomato
+    
+    - name: icecast
+      image: docker.io/pltnk/icecast2
+      ports:
+        - containerPort: 8000
+      volumeMounts:
+        - name: icecast-config
+          mountPath: /etc/icecast2/icecast.xml
+    
+    - name: liquidsoap
+      image: docker.io/pltnk/liquidsoap
+      volumeMounts:
+        - name: liquidsoap-config
+          mountPath: /etc/liquidsoap/script.liq
+        - name: music
+          mountPath: /media/music
+
+  volumes:
+    - name: icecast-config
+      hostPath:
+        path: ./icecast2.xml
+    - name: liquidsoap-config
+      hostPath:
+        path: ./script.liq
+    - name: music
+      hostPath:
+        path: /home/lucas/audio
