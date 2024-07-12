@@ -1,0 +1,17 @@
+FROM alpine:edge
+
+LABEL maintainer="Lucas Saliés Brum <sistematico@gmail.com>" \
+      source="https://github.com/sistematico/podman"
+
+RUN apk update && \
+    apk add curl && \
+    apk add --no-cache --allow-untrusted --no-check-certificate --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing shine && \
+    curl -sOL https://github.com/savonet/liquidsoap/releases/download/v2.2.5/liquidsoap-x86_64-2.2.5-r0.apk && \    
+    apk add --no-cache --allow-untrusted liquidsoap-x86_64-2.2.5-r0.apk && \
+    rm -rf /var/cache/apk/* liquidsoap-x86_64-2.2.5-r0.apk
+
+EXPOSE 1234
+USER liquidsoap
+
+ENTRYPOINT [ "liquidsoap" ]
+CMD [ "-t", "/etc/liquidsoap/liquidsoap.liq" ]

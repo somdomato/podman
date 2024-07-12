@@ -1,0 +1,16 @@
+FROM alpine:edge
+
+LABEL maintainer="Lucas Saliés Brum <sistematico@gmail.com>" \
+      source="https://github.com/sistematico/podman"
+
+RUN apk update && \
+    apk add icecast=2.4.4-r10
+
+RUN mkdir -p /var/log/icecast2 && \  
+    chown -R icecast:icecast /var/log/icecast2
+
+EXPOSE 8000
+USER icecast
+
+ENTRYPOINT [ "icecast" ]
+CMD [ "-c", "/etc/icecast/icecast.xml" ]

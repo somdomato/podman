@@ -1,0 +1,32 @@
+services:
+  icecast:
+    build:
+      dockerfile: ./icecast/Containerfile
+    container_name: icecast
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./icecast/config/icecast.xml:/etc/icecast/icecast.xml
+
+  liquidsoap:
+    build:
+      dockerfile: ./liquidsoap/Containerfile
+    container_name: liquidsoap
+    restart: always
+    volumes:
+      - ./liquidsoap/config/liquidsoap.liq:/etc/liquidsoap/liquidsoap.liq
+      - ./music/:/music/
+    depends_on:
+      - icecast
+
+  api:
+    build:
+      dockerfile: ./api/Containerfile
+    container_name: api
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api/src/index.ts:/usr/src/app/index.ts
+      - ./music/:/music/
